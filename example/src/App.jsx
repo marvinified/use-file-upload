@@ -1,9 +1,6 @@
 import { useState } from 'react'
 import { useFileUpload } from 'use-file-upload'
 
-const DEFAULT_AVATAR =
-  'https://www.pngkit.com/png/full/301-3012694_account-user-profile-avatar-comments-fa-user-circle.png'
-
 const TABS = [
   { id: 'single', label: 'Single file' },
   { id: 'multiple', label: 'Multiple files' },
@@ -40,7 +37,6 @@ export default function App() {
   }
 
   const uploadedFiles = filesByTab[activeTab]
-  const previewImage = uploadedFiles[0]?.source || DEFAULT_AVATAR
 
   const uploadByTab = {
     single: () => {
@@ -106,8 +102,6 @@ export default function App() {
           </button>
         ))}
       </div>
-
-      <img className='preview' src={previewImage} alt='preview avatar' />
 
       <div className='actions'>
         <button className='button' onClick={uploadByTab[activeTab]}>

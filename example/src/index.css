@@ -59,15 +59,6 @@ body {
   color: #312e81;
 }
 
-.preview {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #e5e7eb;
-  margin-bottom: 1rem;
-}
-
 .button {
   border: none;
   border-radius: 8px;
