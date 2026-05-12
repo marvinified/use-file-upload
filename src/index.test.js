@@ -1,5 +1,4 @@
-import React from 'react'
-import { act } from 'react-dom/test-utils'
+import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useFileUpload } from '.'
 
@@ -29,7 +28,7 @@ function setupHookHarness() {
   }
 
   act(() => {
-    root.render(<HookHarness />)
+    root.render(React.createElement(HookHarness))
   })
 
   return {
@@ -46,6 +45,7 @@ function setupHookHarness() {
 
 describe('useFileUpload', () => {
   beforeEach(() => {
+    global.IS_REACT_ACT_ENVIRONMENT = true
     URL.createObjectURL = jest.fn(() => 'blob:preview')
   })
 
@@ -117,8 +117,13 @@ describe('useFileUpload', () => {
     })
 
     const firstInput = getLatestInput()
-    const firstFile = new File(['video one'], 'first.mp4', { type: 'video/mp4' })
-    Object.defineProperty(firstInput, 'files', { configurable: true, value: [firstFile] })
+    const firstFile = new File(['video one'], 'first.mp4', {
+      type: 'video/mp4'
+    })
+    Object.defineProperty(firstInput, 'files', {
+      configurable: true,
+      value: [firstFile]
+    })
 
     act(() => {
       firstInput.dispatchEvent(new Event('change'))
@@ -131,8 +136,13 @@ describe('useFileUpload', () => {
     })
 
     const secondInput = getLatestInput()
-    const secondFile = new File(['video two'], 'second.mp4', { type: 'video/mp4' })
-    Object.defineProperty(secondInput, 'files', { configurable: true, value: [secondFile] })
+    const secondFile = new File(['video two'], 'second.mp4', {
+      type: 'video/mp4'
+    })
+    Object.defineProperty(secondInput, 'files', {
+      configurable: true,
+      value: [secondFile]
+    })
 
     act(() => {
       secondInput.dispatchEvent(new Event('change'))
