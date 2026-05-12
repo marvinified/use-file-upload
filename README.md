@@ -21,9 +21,8 @@ npm install --save use-file-upload
 
 [![Edit usestate-useeffect](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/use-file-upload-jrbe2)
 
-# Usage
 
-## Basic File Upload
+## Basic Usage
 
 ```jsx
 import React from 'react'
@@ -34,21 +33,14 @@ const App = () => {
 
   return (
     <div>
-      <button
-        onClick={() => {
-          // Single File Upload
-          selectFile()
-        }}
-      >
-        Click to Upload
-      </button>
+      <button onClick={selectFile}>Click to Upload</button>
       <button onClick={clearFile}>Clear</button>
 
-      {file ? (
+      {file && !Array.isArray(file) ? (
         <div>
           <img src={file.source} alt='preview' />
-          <span> Name: {file.name} </span>
-          <span> Size: {file.size} </span>
+          <span>Name: {file.name}</span>
+          <span>Size: {file.size}</span>
         </div>
       ) : (
         <span>No file selected</span>
@@ -72,23 +64,26 @@ const App = () => {
   const [file, selectFile, clearFile] = useFileUpload()
 
   return (
-    <button
-      onClick={() =>
-        selectFile(
-          { accept: 'image/*', onCancel: () => console.log('Selection cancelled') },
-          (selectedFile) => console.log(selectedFile)
-        )
-      }
-    >
-      Pick file
-    </button>
+    <div>
+      <button
+        onClick={() =>
+          selectFile(
+            { accept: 'image/*', onCancel: () => console.log('Selection cancelled') },
+            (selectedFile) => console.log(selectedFile)
+          )
+        }
+      >
+        Pick file
+      </button>
+      <button onClick={clearFile}>Clear</button>
+    </div>
   )
 }
 ```
 
 ## Working with selected file
 
-If you want to perform other tasks with the selected file you can pass the callback which returns `{source, name, size, file }`.
+If you want to perform other tasks with the selected file, pass a callback. The callback can receive `null` when no file is selected.
 
 ```jsx
 import React from 'react'
@@ -98,39 +93,25 @@ const App = () => {
   const [file, selectFile] = useFileUpload()
 
   return (
-    <div>
-      <button
-        onClick={() => {
-          // Single File Upload
-          selectFile({}, ({ source, name, size, file }) => {
-            // file - is the raw File Object
-            console.log({ source, name, size, file })
-            // Todo: Upload to cloud.
-          })
-        }}
-      >
-        Click to Upload
-      </button>
+    <button
+      onClick={() =>
+        selectFile({ accept: 'image/*' }, (selectedFile) => {
+          if (!selectedFile || Array.isArray(selectedFile)) return
 
-      {file ? (
-        <div>
-          <img src={file.source} alt='preview' />
-          <span> Name: {file.name} </span>
-          <span> Size: {file.size} </span>
-        </div>
-      ) : (
-        <span>No file selected</span>
-      )}
-    </div>
+          const { source, name, size, file } = selectedFile
+          console.log({ source, name, size, file })
+        })
+      }
+    >
+      Click to Upload
+    </button>
   )
 }
-
-export default App
 ```
 
 ## Multiple Files Upload
 
-Select multiple files at a go.
+Select multiple files at once.
 
 ```jsx
 import React from 'react'
@@ -142,30 +123,29 @@ const App = () => {
   return (
     <div>
       <button
-        onClick={() => {
-          // Single File Upload
-          selectFiles({ multiple: true }, (files) => {
-            // Note callback return an array
-              files.map(({ source, name, size, file }) =>{
-                console.log({ source, name, size, file })
-              })
-            // Todo: Upload to cloud.
-          }))
-        }}
+        onClick={() =>
+          selectFiles({ multiple: true }, (selectedFiles) => {
+            if (!Array.isArray(selectedFiles)) return
+
+            selectedFiles.forEach(({ source, name, size, file }) => {
+              console.log({ source, name, size, file })
+            })
+          })
+        }
       >
         Click to Upload
       </button>
 
-      {files ? (
+      {Array.isArray(files) && files.length > 0 ? (
         files.map((file) => (
-          <div>
+          <div key={file.source}>
             <img src={file.source} alt='preview' />
-            <span> Name: {file.name} </span>
-            <span> Size: {file.size} </span>
+            <span>Name: {file.name}</span>
+            <span>Size: {file.size}</span>
           </div>
         ))
       ) : (
-        <span>No file selected</span>
+        <span>No files selected</span>
       )}
     </div>
   )
@@ -174,13 +154,9 @@ const App = () => {
 export default App
 ```
 
-> Note: `callback` and `files` return an array for multiple files select.
+## Setting allowed file types
 
-<br/>
-
-## Setting Allowed File type
-
-Restrict what types of files can be selected using the `accept` option.It Support all file extensions or MIME types
+Restrict what types of files can be selected using the `accept` option. It supports file extensions and MIME types.
 
 ```jsx
 import React from 'react'
@@ -190,34 +166,18 @@ const App = () => {
   const [file, selectFile] = useFileUpload()
 
   return (
-    <div>
-      <button
-        onClick={() => {
-          // Single File Upload accepts only images
-          selectFile({ accept: 'image/*' }, ({ source, name, size, file }) => {
-            // file - is the raw File Object
-            console.log({ source, name, size, file })
-            // Todo: Upload to cloud.
-          })
-        }}
-      >
-        Click to Upload
-      </button>
-
-      {file ? (
-        <div>
-          <img src={file.source} alt='preview' />
-          <span> Name: {file.name} </span>
-          <span> Size: {file.size} </span>
-        </div>
-      ) : (
-        <span>No file selected</span>
-      )}
-    </div>
+    <button
+      onClick={() =>
+        selectFile({ accept: '.png,.jpg,image/*' }, (selectedFile) => {
+          if (!selectedFile || Array.isArray(selectedFile)) return
+          console.log(selectedFile)
+        })
+      }
+    >
+      Click to Upload
+    </button>
   )
 }
-
-export default App
 ```
 
 ## License
