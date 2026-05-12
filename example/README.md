@@ -1,5 +1,28 @@
-This example was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This example is a [Vite](https://vitejs.dev/) + React app linked to the local `use-file-upload` package in the parent directory.
 
-It is linked to the use-file-upload package in the parent directory for development purposes.
+## Run locally
 
-You can run `yarn install` and then `yarn start` to test your package.
+From repository root:
+
+```bash
+yarn install
+cd example
+yarn install
+yarn start
+```
+
+Open <http://localhost:5173>.
+
+## Develop package and example together
+
+In one terminal (repo root):
+
+```bash
+yarn start
+```
+
+In a second terminal (`example` folder):
+
+```bash
+yarn start
+```

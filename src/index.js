@@ -65,12 +65,13 @@ export const useFileUpload = () => {
     }
 
     const onFocus = () => {
+      // Allow the file picker change event to fire before treating focus as cancel.
       focusTimeout = setTimeout(() => {
         if (!isSelectionMade) {
           cleanup()
           cancelCallback()
         }
-      }, 0)
+      }, 300)
     }
 
     // add event listener
