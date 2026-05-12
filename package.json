@@ -1,6 +1,6 @@
 {
   "name": "use-file-upload",
-  "version": "1.0.11",
+  "version": "1.1.0",
   "description": "react hooks library to build highly customisable file uploads into your react app.",
   "author": "Marvinified",
   "license": "MIT",
