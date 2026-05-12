@@ -30,7 +30,7 @@ import React from 'react'
 import { useFileUpload } from 'use-file-upload'
 
 const App = () => {
-  const [file, selectFile] = useFileUpload()
+  const [file, selectFile, clearFile] = useFileUpload()
 
   return (
     <div>
@@ -42,6 +42,7 @@ const App = () => {
       >
         Click to Upload
       </button>
+      <button onClick={clearFile}>Clear</button>
 
       {file ? (
         <div>
@@ -57,6 +58,32 @@ const App = () => {
 }
 
 export default App
+```
+
+## Detect cancel and clear selected files
+
+You can detect when users close the picker without selecting a file and clear state manually.
+
+```jsx
+import React from 'react'
+import { useFileUpload } from 'use-file-upload'
+
+const App = () => {
+  const [file, selectFile, clearFile] = useFileUpload()
+
+  return (
+    <button
+      onClick={() =>
+        selectFile(
+          { accept: 'image/*', onCancel: () => console.log('Selection cancelled') },
+          (selectedFile) => console.log(selectedFile)
+        )
+      }
+    >
+      Pick file
+    </button>
+  )
+}
 ```
 
 ## Working with selected file

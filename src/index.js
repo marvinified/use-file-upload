@@ -13,53 +13,71 @@ function createInputComponent({ multiple, accept }) {
 
 export const useFileUpload = () => {
   const [files, setFiles] = useState(null)
-  let userCallback = () => {}
-
-  // Handle onChange event
-  const onChange = (e) => {
-    const target = e.target
-    const selectedFiles = Array.from(target.files || [])
-
-    const parsedFiles = selectedFiles.map((file) => ({
-      source: URL.createObjectURL(file),
-      name: file.name,
-      size: file.size,
-      file // original file object
-    }))
-
-    // remove event listener after operation
-    target.removeEventListener('change', onChange)
-
-    // remove input element after operation
-    target.remove()
-
-    // update files state hook
-
-    if (target.multiple) {
-      setFiles(parsedFiles)
-      return userCallback(parsedFiles)
-    }
-
-    setFiles(parsedFiles[0])
-    return userCallback(parsedFiles[0])
-
-    // user specified callback
-  }
+  const clearFiles = () => setFiles(null)
 
   // Handle upload
   const uploadFile = (
-    { accept, multiple } = { accept: '', multiple: false },
+    { accept = '', multiple = false, onCancel } = {
+      accept: '',
+      multiple: false,
+      onCancel: undefined
+    },
     cb
   ) => {
-    if (typeof cb === 'function') {
-      userCallback = cb
-    }
+    const userCallback = typeof cb === 'function' ? cb : () => {}
+    const cancelCallback = typeof onCancel === 'function' ? onCancel : () => {}
+    let isSelectionMade = false
+    let focusTimeout
+
     // create virtual input element
     const inputEL = createInputComponent({ multiple, accept })
+
+    const cleanup = () => {
+      inputEL.removeEventListener('change', onChange)
+      window.removeEventListener('focus', onFocus, true)
+      if (focusTimeout) {
+        clearTimeout(focusTimeout)
+      }
+      inputEL.remove()
+    }
+
+    const onChange = (e) => {
+      isSelectionMade = true
+      const target = e.target
+      const selectedFiles = Array.from(target.files || [])
+      const parsedFiles = selectedFiles.map((file) => ({
+        source: URL.createObjectURL(file),
+        name: file.name,
+        size: file.size,
+        file // original file object
+      }))
+
+      cleanup()
+
+      if (target.multiple) {
+        setFiles(parsedFiles)
+        userCallback(parsedFiles)
+        return
+      }
+
+      setFiles(parsedFiles[0] || null)
+      userCallback(parsedFiles[0] || null)
+    }
+
+    const onFocus = () => {
+      focusTimeout = setTimeout(() => {
+        if (!isSelectionMade) {
+          cleanup()
+          cancelCallback()
+        }
+      }, 0)
+    }
+
     // add event listener
     inputEL.addEventListener('change', onChange)
+    window.addEventListener('focus', onFocus, true)
     inputEL.click()
   }
 
-  return [files, uploadFile]
+  return [files, uploadFile, clearFiles]
 }
