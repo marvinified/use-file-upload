@@ -1,81 +1,76 @@
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+var react = require('react');
 
-var React = require('react');
-var React__default = _interopDefault(React);
+// import styles from './styles.module.css'
 
 function createInputComponent(_ref) {
   var multiple = _ref.multiple,
-      accept = _ref.accept;
+    accept = _ref.accept;
   var el = document.createElement('input');
+  // set input config
   el.type = 'file';
   el.accept = accept;
   el.multiple = multiple;
+  // return file input element
   return el;
 }
-
 var useFileUpload = function useFileUpload() {
-  var _useState = React.useState(null),
-      files = _useState[0],
-      setFiles = _useState[1];
-
+  var _useState = react.useState(null),
+    files = _useState[0],
+    setFiles = _useState[1];
   var userCallback = function userCallback() {};
 
-  var onChange = function onChange(e) {
-    try {
-      var parsedFiles = [];
-      var target = e.target;
+  // Handle onChange event
+  var _onChange = function onChange(e) {
+    var target = e.target;
+    var selectedFiles = Array.from(target.files || []);
+    var parsedFiles = selectedFiles.map(function (file) {
+      return {
+        source: URL.createObjectURL(file),
+        name: file.name,
+        size: file.size,
+        file: file // original file object
+      };
+    });
 
-      for (var fileIndex in target.files) {
-        if (isNaN(fileIndex)) {
-          continue;
-        }
+    // remove event listener after operation
+    target.removeEventListener('change', _onChange);
 
-        var file = target.files[fileIndex];
-        var parsedFile = {
-          source: URL.createObjectURL(file),
-          name: file.name,
-          size: file.size,
-          file: file
-        };
-        parsedFiles.push(parsedFile);
-      }
+    // remove input element after operation
+    target.remove();
 
-      target.removeEventListener('change', onChange);
-      target.remove();
+    // update files state hook
 
-      if (target.multiple) {
-        setFiles(parsedFiles);
-        return Promise.resolve(userCallback(parsedFiles));
-      }
-
-      setFiles(parsedFiles[0]);
-      return Promise.resolve(userCallback(parsedFiles[0]));
-    } catch (e) {
-      return Promise.reject(e);
+    if (target.multiple) {
+      setFiles(parsedFiles);
+      return userCallback(parsedFiles);
     }
+    setFiles(parsedFiles[0]);
+    return userCallback(parsedFiles[0]);
+
+    // user specified callback
   };
 
+  // Handle upload
   var uploadFile = function uploadFile(_temp, cb) {
     var _ref2 = _temp === void 0 ? {
-      accept: '',
-      multiple: false
-    } : _temp,
-        accept = _ref2.accept,
-        multiple = _ref2.multiple;
-
+        accept: '',
+        multiple: false
+      } : _temp,
+      accept = _ref2.accept,
+      multiple = _ref2.multiple;
     if (typeof cb === 'function') {
       userCallback = cb;
     }
-
+    // create virtual input element
     var inputEL = createInputComponent({
       multiple: multiple,
       accept: accept
     });
-    inputEL.addEventListener('change', onChange);
+    // add event listener
+    inputEL.addEventListener('change', _onChange);
     inputEL.click();
   };
-
-  return React__default.useMemo(function () {
+  return react.useMemo(function () {
     return [files, uploadFile];
   }, [files]);
 };

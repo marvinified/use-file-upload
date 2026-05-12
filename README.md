@@ -7,10 +7,15 @@ React hooks library to add highly customisable file uploads into your react appl
 ## Install
 
 ```bash
-npm install --save use-file-upload
-# or
 yarn add use-file-upload
+# or
+npm install --save use-file-upload
 ```
+
+## Compatibility
+
+- Node.js `>=18`
+- React `>=16.8.0 <20`
 
 ## Fork Demo on Codesandbox
 

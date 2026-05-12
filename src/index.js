@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useMemo, useState } from 'react'
 // import styles from './styles.module.css'
 
 function createInputComponent({ multiple, accept }) {
@@ -16,32 +16,16 @@ export const useFileUpload = () => {
   let userCallback = () => {}
 
   // Handle onChange event
-  const onChange = async (e) => {
-    const parsedFiles = []
+  const onChange = (e) => {
     const target = e.target
+    const selectedFiles = Array.from(target.files || [])
 
-    // Loop through files
-    for (const fileIndex in target.files) {
-      // check if index is a number
-      if (isNaN(fileIndex)) {
-        continue
-      }
-
-      // get file object
-      const file = target.files[fileIndex]
-
-      // select properties
-
-      const parsedFile = {
+    const parsedFiles = selectedFiles.map((file) => ({
         source: URL.createObjectURL(file),
         name: file.name,
         size: file.size,
         file // original file object
-      }
-
-      // add to parsed file list
-      parsedFiles.push(parsedFile)
-    }
+      }))
 
     // remove event listener after operation
     target.removeEventListener('change', onChange)
@@ -77,5 +61,5 @@ export const useFileUpload = () => {
     inputEL.click()
   }
 
-  return React.useMemo(() => [files, uploadFile], [files])
+  return useMemo(() => [files, uploadFile], [files])
 }
