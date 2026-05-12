@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 // import styles from './styles.module.css'
 
 function createInputComponent({ multiple, accept }) {
@@ -21,11 +21,11 @@ export const useFileUpload = () => {
     const selectedFiles = Array.from(target.files || [])
 
     const parsedFiles = selectedFiles.map((file) => ({
-        source: URL.createObjectURL(file),
-        name: file.name,
-        size: file.size,
-        file // original file object
-      }))
+      source: URL.createObjectURL(file),
+      name: file.name,
+      size: file.size,
+      file // original file object
+    }))
 
     // remove event listener after operation
     target.removeEventListener('change', onChange)
@@ -61,5 +61,5 @@ export const useFileUpload = () => {
     inputEL.click()
   }
 
-  return useMemo(() => [files, uploadFile], [files])
+  return [files, uploadFile]
 }

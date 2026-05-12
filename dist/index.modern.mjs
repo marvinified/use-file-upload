@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 // import styles from './styles.module.css'
 
@@ -67,7 +67,7 @@ const useFileUpload = () => {
     inputEL.addEventListener('change', onChange);
     inputEL.click();
   };
-  return useMemo(() => [files, uploadFile], [files]);
+  return [files, uploadFile];
 };
 
 export { useFileUpload };

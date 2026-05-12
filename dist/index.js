@@ -70,9 +70,7 @@ var useFileUpload = function useFileUpload() {
     inputEL.addEventListener('change', _onChange);
     inputEL.click();
   };
-  return react.useMemo(function () {
-    return [files, uploadFile];
-  }, [files]);
+  return [files, uploadFile];
 };
 
 exports.useFileUpload = useFileUpload;

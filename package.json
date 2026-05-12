@@ -8,13 +8,13 @@
   "main": "dist/index.js",
   "module": "dist/index.modern.mjs",
   "source": "src/index.js",
-  "typings": "@types/index",
+  "typings": "@types/index.d.ts",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "build": "rm -rf dist && microbundle --no-compress --format modern,cjs",
-    "start": "microbundle watch --no-compress --format modern,cjs",
+    "build": "rm -rf dist && microbundle --no-generateTypes --no-compress --format modern,cjs",
+    "start": "microbundle watch --no-generateTypes --no-compress --format modern,cjs",
     "prepare": "run-s build",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
