@@ -1,25 +1,124 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #111827;
+  background-color: #f3f4f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+#root {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
 }
 
-#app {
-  width: 100%;
-  height: 100vh;
+.app {
+  width: min(100%, 680px);
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+}
+
+.tabs {
   display: flex;
-  flex-direction: column;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  margin-bottom: 1rem;
 }
 
-img {
-  width: 100px;
-  padding: 1em;
+.tab {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  color: #374151;
+}
+
+.tab-active {
+  background: #e0e7ff;
+  border-color: #a5b4fc;
+  color: #312e81;
+}
+
+.button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.625rem 1rem;
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.button-secondary {
+  background: #4b5563;
+}
+
+.meta {
+  margin-top: 1rem;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.config {
+  margin: 0 0 0.4rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.status {
+  margin: 0 0 0.8rem;
+  color: #4338ca;
+}
+
+.file-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.file-item {
+  padding: 0.625rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.file-name {
+  font-weight: 600;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  color: #6b7280;
 }

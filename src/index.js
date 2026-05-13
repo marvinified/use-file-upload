@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 // import styles from './styles.module.css'
 
 function createInputComponent({ multiple, accept }) {
@@ -13,69 +13,72 @@ function createInputComponent({ multiple, accept }) {
 
 export const useFileUpload = () => {
   const [files, setFiles] = useState(null)
-  let userCallback = () => {}
+  const clearFiles = () => setFiles(null)
 
-  // Handle onChange event
-  const onChange = async (e) => {
-    const parsedFiles = []
-    const target = e.target
+  // Handle upload
+  const uploadFile = (
+    { accept = '', multiple = false, onCancel } = {
+      accept: '',
+      multiple: false,
+      onCancel: undefined
+    },
+    cb
+  ) => {
+    const userCallback = typeof cb === 'function' ? cb : () => {}
+    const cancelCallback = typeof onCancel === 'function' ? onCancel : () => {}
+    let isSelectionMade = false
+    let focusTimeout
 
-    // Loop through files
-    for (const fileIndex in target.files) {
-      // check if index is a number
-      if (isNaN(fileIndex)) {
-        continue
+    // create virtual input element
+    const inputEL = createInputComponent({ multiple, accept })
+
+    const cleanup = () => {
+      inputEL.removeEventListener('change', onChange)
+      window.removeEventListener('focus', onFocus, true)
+      if (focusTimeout) {
+        clearTimeout(focusTimeout)
       }
+      inputEL.remove()
+    }
 
-      // get file object
-      const file = target.files[fileIndex]
-
-      // select properties
-
-      const parsedFile = {
+    const onChange = (e) => {
+      isSelectionMade = true
+      const target = e.target
+      const selectedFiles = Array.from(target.files || [])
+      const parsedFiles = selectedFiles.map((file) => ({
         source: URL.createObjectURL(file),
         name: file.name,
         size: file.size,
         file // original file object
+      }))
+
+      cleanup()
+
+      if (target.multiple) {
+        setFiles(parsedFiles)
+        userCallback(parsedFiles)
+        return
       }
 
-      // add to parsed file list
-      parsedFiles.push(parsedFile)
+      setFiles(parsedFiles[0] || null)
+      userCallback(parsedFiles[0] || null)
     }
 
-    // remove event listener after operation
-    target.removeEventListener('change', onChange)
-
-    // remove input element after operation
-    target.remove()
-
-    // update files state hook
-
-    if (target.multiple) {
-      setFiles(parsedFiles)
-      return userCallback(parsedFiles)
+    const onFocus = () => {
+      // Allow the file picker change event to fire before treating focus as cancel.
+      focusTimeout = setTimeout(() => {
+        if (!isSelectionMade) {
+          cleanup()
+          cancelCallback()
+        }
+      }, 300)
     }
 
-    setFiles(parsedFiles[0])
-    return userCallback(parsedFiles[0])
-
-    // user specified callback
-  }
-
-  // Handle upload
-  const uploadFile = (
-    { accept, multiple } = { accept: '', multiple: false },
-    cb
-  ) => {
-    if (typeof cb === 'function') {
-      userCallback = cb
-    }
-    // create virtual input element
-    const inputEL = createInputComponent({ multiple, accept })
     // add event listener
     inputEL.addEventListener('change', onChange)
+    window.addEventListener('focus', onFocus, true)
     inputEL.click()
   }
 
-  return React.useMemo(() => [files, uploadFile], [files])
+  return [files, uploadFile, clearFiles]
 }

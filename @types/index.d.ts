@@ -1,13 +1,23 @@
+declare module 'use-file-upload' {
+  type FileUpload = {
+    source: string
+    name: string
+    size: number
+    file: File
+  }
 
-declare module "use-file-upload" {
-    type FileUpload = {
-        source: URL
-        name: string
-        size: number
-        file: File
-    }
+  type Callback = (file: FileUpload | FileUpload[] | null) => void
+  type CancelCallback = () => void
 
-    type Callback = (file: FileUpload | [FileUpload]) => void
+  type UploadOptions = {
+    accept?: string
+    multiple?: boolean
+    onCancel?: CancelCallback
+  }
 
-    const useFileUpload: () => [FileUpload | [FileUpload], ({ accept: string, multiple: boolean }, callback: Callback) => void]
+  export const useFileUpload: () => [
+    FileUpload | FileUpload[] | null,
+    (options?: UploadOptions, callback?: Callback) => void,
+    () => void
+  ]
 }
